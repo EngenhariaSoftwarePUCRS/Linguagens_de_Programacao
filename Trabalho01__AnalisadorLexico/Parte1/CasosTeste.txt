@@ -1,0 +1,11 @@
+1. Not um comentário
+
+2. // Comentário não suportado
+
+3. /* Comentário Válido */
+
+4. /* Comentário
+ * Válido
+ */
+
+5. /* Quase um comentário
