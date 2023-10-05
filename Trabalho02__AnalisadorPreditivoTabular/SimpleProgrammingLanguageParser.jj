@@ -1,0 +1,47 @@
+/*
+This program generates a parser for the following grammar:
+
+G = ({S, A, E, C}, {for, id, =, op, ;, (, ) }, P, S) 
+P: { S -> for (A;E) C 
+       A -> id = id 
+       E -> id op id 
+       C -> A | S }
+
+The grammar above represents a simple programming language that has for loops, assignments, and expressions.
+
+Where id is a variable name, op is a comparison operator, and the rest are terminals.
+Also, A stands for assignment, E for expression, and C for command.
+*/
+
+options {
+  STATIC = false;
+  JDK_VERSION = "1.8";
+}
+
+PARSER_BEGIN(SimpleProgrammingLanguage)
+import java.io.*;
+public class SimpleProgrammingLanguage {
+  public static void main(String[] args) throws ParseException {
+    SimpleProgrammingLanguage parser = new SimpleProgrammingLanguage(System.in);
+    parser.Start();
+  }
+}
+PARSER_END(SimpleProgrammingLanguage)
+
+TOKEN : {
+  "for" | "=" | ";" | "(" | ")" |
+  < ID : (["a"-"z", "A"-"Z"])+ > |
+  < OP : ("<" | ">" | "==" | "!=")? >
+}
+
+void Start() : {} {
+  "for" "(" Assignment() ";" Expression() ")" ( Assignment() | Start() )
+}
+
+void Assignment() : {} {
+  <ID> "=" <ID>
+}
+
+void Expression() : {} {
+  <ID> <OP> <ID>
+}
