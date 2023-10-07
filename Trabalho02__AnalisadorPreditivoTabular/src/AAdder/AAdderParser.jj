@@ -1,0 +1,55 @@
+/*
+This program generates a parser for the following grammar:
+
+G = ({ E, E’, T}, {+, a} P, E) 
+P: { E -> TE’ 
+       E’-> +TE’ |  ε  
+       T -> a }
+
+The grammar above represents the language of arithmetic expressions with addition over the alphabet {a}.
+*/
+
+options {
+  STATIC = false;
+  JDK_VERSION = "1.8";
+}
+
+PARSER_BEGIN(AAdderParser)
+import java.io.*;
+public class AAdderParser {
+  public static void main(String[] args) throws ParseException {
+    AAdderParser parser = new AAdderParser(System.in);
+    parser.Start();
+  }
+}
+PARSER_END(AAdderParser)
+
+TOKEN : {
+  "+" | "a"
+}
+
+// Ignore all white space characters
+<*> SKIP: {
+  < " " | "\t" | "\r" | "\n" | "\r\n" > |
+  <"//" (~["\n","\r"])* ("\n"|"\r"|"\r\n") > |
+  <"/*"(~["/"])*  "*""/" >
+}
+
+void Start() : {} {
+  E()
+}
+
+void E() : {} {
+  // E -> TE’
+  T() EPrime()
+}
+
+void EPrime() : {} {
+  // E’-> +TE’ |  ε
+  "+" T() EPrime() | ";"
+}
+
+void T() : {} {
+  // T -> a
+  "a"
+}

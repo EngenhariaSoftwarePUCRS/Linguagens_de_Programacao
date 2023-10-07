@@ -18,30 +18,40 @@ options {
   JDK_VERSION = "1.8";
 }
 
-PARSER_BEGIN(SimpleProgrammingLanguage)
+PARSER_BEGIN(ForLoopParser)
 import java.io.*;
-public class SimpleProgrammingLanguage {
+public class ForLoopParser {
   public static void main(String[] args) throws ParseException {
-    SimpleProgrammingLanguage parser = new SimpleProgrammingLanguage(System.in);
+    ForLoopParser parser = new ForLoopParser(System.in);
     parser.Start();
   }
 }
-PARSER_END(SimpleProgrammingLanguage)
+PARSER_END(ForLoopParser)
 
 TOKEN : {
   "for" | "=" | ";" | "(" | ")" |
-  < ID : (["a"-"z", "A"-"Z"])+ > |
-  < OP : ("<" | ">" | "==" | "!=")? >
+  < ID : (["a"-"z", "A"-"Z", "0"-"9"])+ > |
+  < OP : ("<" | ">" | "==" | "!=") >
+}
+
+// Ignore all whitespace characters
+<*> SKIP: {
+  < " " | "\t" | "\r" | "\n" | "\r\n" > |
+  <"//" (~["\n","\r"])* ("\n"|"\r"|"\r\n") > |
+  <"/*"(~["/"])*  "*""/" >
 }
 
 void Start() : {} {
+  // S -> for (A;E) C
   "for" "(" Assignment() ";" Expression() ")" ( Assignment() | Start() )
 }
 
 void Assignment() : {} {
+  // A -> id = id
   <ID> "=" <ID>
 }
 
 void Expression() : {} {
+  // E -> id op id
   <ID> <OP> <ID>
 }
